@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Eagle To OpenSCAD : An Eagle ULP to convert boards into 3D OpenSCAD modules." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Eagle To OpenSCAD</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/sjkelly/EagleToOpenSCAD">View on GitHub</a>
+
+          <h1 id="project_title">Eagle To OpenSCAD</h1>
+          <h2 id="project_tagline">An Eagle ULP to convert boards into 3D OpenSCAD modules.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/sjkelly/EagleToOpenSCAD/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/sjkelly/EagleToOpenSCAD/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="eagle-to-openscad" class="anchor" href="#eagle-to-openscad"><span class="octicon octicon-link"></span></a>Eagle to OpenSCAD</h1>
+
+<p>This work is derived from EagleUp. Currently this script has support for board and component export. The board portion has been heavily tested for the generation of test jigs at UltiMachine. The script will export a component and position in <code>translate()module()</code> form. However, none of these modules for components exist and this output is therefore untested. </p>
+
+<h2>
+<a name="use" class="anchor" href="#use"><span class="octicon octicon-link"></span></a>Use</h2>
+
+<p><img src="./screenshot.png" alt="Screenshot"></p>
+
+<h3>
+<a name="outline-layer" class="anchor" href="#outline-layer"><span class="octicon octicon-link"></span></a>Outline layer</h3>
+
+<p>Existing functionality from EagleUp.</p>
+
+<h3>
+<a name="3d-export" class="anchor" href="#3d-export"><span class="octicon octicon-link"></span></a>3D Export</h3>
+
+<h4>
+<a name="3d-csg" class="anchor" href="#3d-csg"><span class="octicon octicon-link"></span></a>3D CSG</h4>
+
+<p>Uses 3D primitives to generate the board model.</p>
+
+<h4>
+<a name="extrude" class="anchor" href="#extrude"><span class="octicon octicon-link"></span></a>Extrude</h4>
+
+<p>Creates a 2D drawing of the board holes and uses <code>linear_extrude()</code> to extrude the sketch into 3D. OpenSCAD interprets this slower than 3D CSG.</p>
+
+<h3>
+<a name="holes" class="anchor" href="#holes"><span class="octicon octicon-link"></span></a>Holes</h3>
+
+<h4>
+<a name="regular" class="anchor" href="#regular"><span class="octicon octicon-link"></span></a>Regular</h4>
+
+<p>Uses the traditional OpenSCAD <code>cylinder()</code> to create holes.</p>
+
+<h4>
+<a name="polyholes-requires-magpie" class="anchor" href="#polyholes-requires-magpie"><span class="octicon octicon-link"></span></a>Polyholes (requires Magpie)</h4>
+
+<p>Uses <a href="http://hydraraptor.blogspot.com/2011/02/polyholes.html">polyholes by nophead</a> to create accurately sized holes for 3D printing. The functionality is imported from the <a href="https://github.com/sjkelly/Magpie">Magpie hardware library</a> for OpenSCAD. See the library readme for installation instructions.</p>
+
+<h2>
+<a name="bugs-and-contributions" class="anchor" href="#bugs-and-contributions"><span class="octicon octicon-link"></span></a>Bugs and Contributions</h2>
+
+<p>Send issues and pull requests to sjkelly on GitHub. </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Eagle To OpenSCAD maintained by <a href="https://github.com/sjkelly">sjkelly</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
