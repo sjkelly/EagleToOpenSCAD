@@ -1,8 +1,9 @@
 #Eagle to OpenSCAD
+![RAMBo](./pics/rambo.png)
 This work is derived from EagleUp. Currently this script has support for board and component export. The board portion has been heavily tested for the generation of test jigs at UltiMachine. The script will export a component and position in `translate()module()` form. However, none of these modules for components exist and this output is therefore untested. 
 
 ##Use
-![Screenshot](./screenshot.png)
+![Screenshot](./pics/screenshot.png)
 
 ###Outline layer
 Existing functionality from EagleUp.
