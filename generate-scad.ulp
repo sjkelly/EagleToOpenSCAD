@@ -466,9 +466,13 @@ if (board) board(B)
 
       /* Starting data for .scad file */
       if(use_polyholes)printf("include <Magpie/magpie.scad>;\n\n");
-      printf("module %s(){\n\tboard_thickness = %f;\n\teta = 0.1;\n\tboard_size = [%f,%f,board_thickness];\n\tunion(){\n", replace_string(filename(B.name),".brd",""), board_thickness, (u2mm(max_h)-u2mm(min_h)), (u2mm(max_v)-u2mm(min_v)));
+      printf("module %s(){\n\tboard_thickness = %f;\n\teta = 0.1;\n\tboard_size = [%f,%f", replace_string(filename(B.name),".brd",""), board_thickness, (u2mm(max_h)-u2mm(min_h)), (u2mm(max_v)-u2mm(min_v)));
+        if(use_extrude)
+            printf("];\n\tunion(){\n");
+        else
+            printf(",board_thickness];\n\tunion(){\n");
       printf("\t\tcolor(\"%s\")",board_colors[board_color_selected]);
-      if(use_extrude)printf("linear_extrude(height=%f,center=false, convexity=10)", board_thickness);
+      if(use_extrude)printf("linear_extrude(height=board_thickness,center=false, convexity=10)");
       printf("difference(){\n");
       if(use_extrude)
         printf("\t\t\tsquare(board_size); \/\/Board\n");
