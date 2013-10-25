@@ -341,9 +341,7 @@ if (board) board(B)
               new_folder_path = strjoin(a, '\\');
             else
               new_folder_path = strjoin(a, '/');
-
-            system( mkdir_cmd + " " + "\"" + new_folder_path + "\"");
-
+              system( mkdir_cmd + " " + "\"" + new_folder_path + "\"");
           }
       }
 
