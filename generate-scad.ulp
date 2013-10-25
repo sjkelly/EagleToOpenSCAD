@@ -182,9 +182,6 @@ if (board) board(B)
 
     string active_layers = list_active_layers();
 
-    // path for config file on old versions, something like "C:/Program Files/EAGLE-X.Y/ulp/eagleUp_export.settings.txt"
-    string settings_file = filesetext( argv[0] , ".settings.txt"); // argv[0] is the full path of this ULP
-
     // read parameters from user's eaglerc file, if first run => use default values
     //***5.9
     board_thickness = strtod(cfgget("genscad.board_thickness" , "1.6"));
@@ -434,7 +431,7 @@ if (board) board(B)
         else if(use_extrude)
           printf("\t\t\ttranslate([%.3f,%.3f])circle(r=%f); \/\/Hole\n",
                u2mm(H.x) , u2mm(H.y) , u2mm(H.drill)/2);
-	else if(use_polyholes)
+        else if(use_polyholes)
           printf("\t\t\ttranslate([%.3f,%.3f,-0.1])poly_cylinder(r=%f, h=board_thickness+0.2); \/\/Hole\n",
                u2mm(H.x) , u2mm(H.y) , u2mm(H.drill)/2);
         else
@@ -453,7 +450,7 @@ if (board) board(B)
         else if(use_extrude)
           printf("\t\t\ttranslate([%.3f,%.3f])circle(r=%f); \/\/hole\n",
                u2mm(H.x) , u2mm(H.y) , u2mm(H.drill)/2);
-	else if(use_polyholes)
+        else if(use_polyholes)
           printf("\t\t\ttranslate([%.3f,%.3f,-eta])poly_cylinder(r=%f, h=board_thickness+eta*2); \/\/hole\n",
                u2mm(H.x) , u2mm(H.y) , u2mm(H.drill)/2);
         else
@@ -475,7 +472,7 @@ if (board) board(B)
               else if(use_extrude)
                 printf("\t\t\ttranslate([%.3f,%.3f])circle(r=%f); \/\/via\n",
                   u2mm(V.x) , u2mm(V.y) , u2mm(V.drill)/2);
-	      else if(use_polyholes)
+              else if(use_polyholes)
                 printf("\t\t\ttranslate([%.3f,%.3f,-eta])poly_cylinder(r=%f, h=board_thickness+eta*2); \/\/via\n",
                   u2mm(V.x) , u2mm(V.y) , u2mm(V.drill)/2);
               else
@@ -493,17 +490,17 @@ if (board) board(B)
             {
               holes++;
               if(use_extrude && use_polyholes)
-                printf("\t\t\ttranslate([%.3f,%.3f])poly_circle(r=%f); \/\/package hole\n",
-                  u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2);
+                printf("\t\t\ttranslate([%.3f,%.3f])poly_circle(r=%f); \/\/%s %s\n",
+                  u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2, E.package.name, C.name);
                else if(use_extrude)
-                 printf("\t\t\ttranslate([%.3f,%.3f])circle(r=%f); \/\/package hole\n",
-                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2);
-	       else if(use_polyholes)
-                 printf("\t\t\ttranslate([%.3f,%.3f,-eta])poly_cylinder(r=%f, h=board_thickness+eta*2); \/\/package hole\n",
-                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2);
+                 printf("\t\t\ttranslate([%.3f,%.3f])circle(r=%f); \/\/%s %s\n",
+                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2, E.package.name, C.name);
+               else if(use_polyholes)
+                 printf("\t\t\ttranslate([%.3f,%.3f,-eta])poly_cylinder(r=%f, h=board_thickness+eta*2); \/\/%s %s\n",
+                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2, E.package.name, C.name);
                else
-                 printf("\t\t\ttranslate([%.3f,%.3f,-eta])cylinder(r=%f, h=board_thickness+eta*2); \/\/package hole\n",
-                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2);
+                 printf("\t\t\ttranslate([%.3f,%.3f,-eta])cylinder(r=%f, h=board_thickness+eta*2); \/\/%s %s\n",
+                   u2mm(C.x) , u2mm(C.y) , u2mm(C.pad.drill)/2, E.package.name, C.name);
             }
         }
       }
