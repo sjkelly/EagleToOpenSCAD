@@ -27,73 +27,69 @@
 "<p>Documentation avaliable at http://github.com/"
 "<p><author>Author: sjkelly@wpi.edu</author>"
 
-#require 5.0900					// functions netget, cfgget and cfgset only available on versions 5.9 and newer
+#require 5.0900 // functions netget, cfgget and cfgset only available on versions 5.9 and newer
 // another version is available for older Eagle installations
 
 // you can adjust board colors below
-// there are 4 predefined colors and one set at run time
-// each of them is defined by a board color (dark)
-// and a lighter color for the traces
-string board_colors[] = { "green" , "red" , "blue" , "black" , "white" , "yellow"};
+// can use any string in w3C SVG color list
+// https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language#color
+string board_colors[] = {"green" , "red" , "blue" , "black" , "white" , "yellow"};
 
 // gloabal variables
 string rm_cmd, mkdir_cmd, export_path, cmd;
-int grid_unit;			// keep the used grid unit
+int grid_unit; // keep the used grid unit
 
 // Convert unity to mic, mm, mil or inch using board grid settings.
-real u2u(int val)
-{
-  switch (grid_unit)
-    {
-    case GRID_UNIT_MIC  :
-      return u2mic(val);
-    case GRID_UNIT_MM   :
-      return u2mm(val);
-    case GRID_UNIT_MIL  :
-      return u2mil(val);
-    case GRID_UNIT_INCH :
-      return u2inch(val);
+real u2u(int val, int grid_unit) {
+    switch (grid_unit) {
+        case GRID_UNIT_MIC:
+            return u2mic(val);
+            
+        case GRID_UNIT_MM:
+            return u2mm(val);
+
+        case GRID_UNIT_MIL:
+            return u2mil(val);
+
+        case GRID_UNIT_INCH:
+            return u2inch(val);
     }
 }
 
 // find string s2 in s1, and replace with s3
-string replace_string(string s1, string s2, string s3)
-{
-  int i, pos = 1;
-  string a = s1;
-  while (pos >= 0)
-    {
-      pos = strstr(a, s2);
-      if (pos < 0) break;
-      string st1 = strsub(a, 0, pos);
-      string st2 = strsub(a, pos + strlen(s2));
-      a = st1+s3+st2;
+string replace_string(string s1, string s2, string s3) {
+    int i, pos = 1;
+    string a = s1;
+    while (pos >= 0) {
+        pos = strstr(a, s2);
+        if (pos < 0)
+            break;
+        string st1 = strsub(a, 0, pos);
+        string st2 = strsub(a, pos + strlen(s2));
+        a = st1+s3+st2;
     }
-  return a;
+    return a;
 }
 
-string up_one_folder( string path )
-{
-  return strsub( path , 0 , strrstr( path , "/" , strlen(path)-2 )+1 );
+string up_one_folder( string path ) {
+    return strsub(path , 0 , strrstr(path ,"/" ,strlen(path) - 2) + 1);
 }
 
-int correct_settings( void )
-{
-  int failed = 0;
+int correct_settings( void ) {
+    int failed = 0;
 
-  //replacing wrong characters automatically
-  export_path = replace_string( export_path , "\\" , "/" );
+    //replacing wrong characters automatically
+    export_path = replace_string( export_path , "\\" , "/" );
 
-  // export path can be empty
-  // if not empty, \ are replaced automatically by /
-  // the last character should be a / automatically added
-  if( export_path != "" )
-    {
-      if( strsub(export_path,strlen(export_path)-1,1) != "/" )
-        export_path = export_path + "/";
+    // export path can be empty
+    // if not empty, \ are replaced automatically by /
+    // the last character should be a / automatically added
+    if( export_path != "" ) {
+        if( strsub(export_path,strlen(export_path)-1,1) != "/" )
+            export_path = export_path + "/";
     }
 
-  return failed;
+    return failed;
 }
 
 /* OS detection function suggested by Andreas Weidner
@@ -108,9 +104,8 @@ int is_windows()
 
 /* functions below are used to check and correct the curved edges of the board */
 
-real deg_to_rad(real deg)
-{
-  return (deg/360)*(2*PI);
+real deg_to_rad(real deg){
+    return (deg/360)*(2*PI);
 }
 
 real get_arc_mid_x(UL_ARC arc)
@@ -138,13 +133,11 @@ real get_arc_mid_y(UL_ARC arc)
   int x1i, y1i;
   real da = deg_to_rad((arc.angle1 - arc.angle2)/2);
 
-  if(da > 0)
-    {
+  if(da > 0) {
       x1i = arc.x1;
       y1i = arc.y1;
     }
-  else
-    {
+  else {
       x1i = arc.x2;
       y1i = arc.y2;
     }
@@ -184,7 +177,8 @@ real get_wire_min_h(UL_WIRE wire)
     return min(wire.x1, wire.x2);
 }
 
-string list_active_layers( void )	// list all visible layers in a string with space separation between numbers
+// list all visible layers in a string with space separation between numbers
+string list_active_layers( void )
 {
   string active_layers;
   board (B)
@@ -200,23 +194,23 @@ string list_active_layers( void )	// list all visible layers in a string with sp
 
 void help_box(void)
 {
-  dlgMessageBox( "This is the first time you ran generate-scad.ulp The next window will help you configure your local settings. All your preferences are saved and will be restored when you run generate-scad.ulp the next time." );
+    dlgMessageBox("This is the first time you ran generate-scad.ulp The next \
+window will help you configure your local settings. All your preferences \
+are saved and will be restored when you run generate-scad.ulp the next time.");
 }
 
-
-
-
-/* main function starts here */
 
 // only runs in the board, not schematic or library
 if (board) board(B)
   {
     int major_version = 0;
     int minor_version = 1;
-    string url = "http://github.com/";
+
+    // Version Number
     string genscad_version;
     sprintf( genscad_version , "%d.%d" , major_version , minor_version);
 
+    //Options
     real board_thickness;
     int board_color_selected;
     int outline_layer;
@@ -239,32 +233,32 @@ if (board) board(B)
 
 
     // path for config file on old versions, something like "C:/Program Files/EAGLE-X.Y/ulp/eagleUp_export.settings.txt"
-    string settings_file = filesetext( argv[0] , ".settings.txt");	// argv[0] is the full path of this ULP
+    string settings_file = filesetext( argv[0] , ".settings.txt"); // argv[0] is the full path of this ULP
 
-    /* read parameters from user's eaglerc file, if first run => use default values */
+    // read parameters from user's eaglerc file, if first run => use default values
     //***5.9
-    board_thickness 			= strtod( cfgget( "genscad.board_thickness" , 		"1.6" ) );
-    board_color_selected 		= strtol( cfgget( "genscad.board_color_selected" , 	"1" ) );		// default => red
-    outline_layer 			= strtol( cfgget( "genscad.outline_layer" , 		"0" ) );		// default => dimension
-    board_only 				= strtol( cfgget( "genscad.board_only" , 			"0" ) );		// default => disabled
-    rm_cmd 						= cfgget( "genscad.rm_cmd" , 					"" );
-    export_path					= cfgget( "genscad.export_path" , 				"" );
-    skip_vias 				= strtol( cfgget( "genscad.skip_vias" , 			"0" ) );		// default => disabled
-    use_extrude				= strtol( cfgget( "genscad.use_extrude" , 			"0" ) );		// default => disabled
-    use_polyholes				= strtol( cfgget( "genscad.use_polyholes" , 			"0" ) );		// default => disabled
+    board_thickness = strtod(cfgget("genscad.board_thickness" , "1.6"));
+    board_color_selected = strtol(cfgget("genscad.board_color_selected" , "1")); // default => red
+    outline_layer = strtol(cfgget( "genscad.outline_layer" , "0")); // default => dimension
+    board_only = strtol(cfgget( "genscad.board_only" , "0")); // default => disabled
+    rm_cmd = cfgget("genscad.rm_cmd" , "");
+    export_path = cfgget("genscad.export_path" , "");
+    skip_vias = strtol(cfgget( "genscad.skip_vias" , "0")); // default => disabled
+    use_extrude = strtol(cfgget( "genscad.use_extrude" , "0")); // default => disabled
+    use_polyholes = strtol(cfgget( "genscad.use_polyholes" , "0")); // default => disabled
     string board_thickness_unit[] = {"mm","mils","inch"};
-    int board_thickness_unit_selected = 0;		// mm selected by default
+    int board_thickness_unit_selected = 0; // mm selected by default
 
     // automatic OS detection for OS specific commands
     if( is_windows() )
       {
         rm_cmd = "del";
-        mkdir_cmd = "cmd.exe /c mkdir";		// include system call
+        mkdir_cmd = "cmd.exe /c mkdir"; // include system call
       }
     else
       {
         rm_cmd = "rm";
-        mkdir_cmd = "mkdir";				// on linux and mac OS, no need to call terminal
+        mkdir_cmd = "mkdir"; // on linux and mac OS, no need to call terminal
       }
 
     int previous_unit = board_thickness_unit_selected;
@@ -314,17 +308,17 @@ if (board) board(B)
               dlgRealEdit(board_thickness, 0.0, 500.0);
               dlgComboBox(board_thickness_unit, board_thickness_unit_selected)
               {
-                if		( previous_unit==0 && board_thickness_unit_selected==1)
+                if ( previous_unit==0 && board_thickness_unit_selected==1)
                   board_thickness /= 0.0254;
-                else if	( previous_unit==0 && board_thickness_unit_selected==2)
+                else if ( previous_unit==0 && board_thickness_unit_selected==2)
                   board_thickness /= 25.4;
-                else if	( previous_unit==1 && board_thickness_unit_selected==0)
+                else if ( previous_unit==1 && board_thickness_unit_selected==0)
                   board_thickness *= 0.0254;
-                else if	( previous_unit==1 && board_thickness_unit_selected==2)
+                else if ( previous_unit==1 && board_thickness_unit_selected==2)
                   board_thickness /= 1000;
-                else if	( previous_unit==2 && board_thickness_unit_selected==0)
+                else if ( previous_unit==2 && board_thickness_unit_selected==0)
                   board_thickness *= 25.4;
-                else if	( previous_unit==2 && board_thickness_unit_selected==1)
+                else if ( previous_unit==2 && board_thickness_unit_selected==1)
                   board_thickness *= 1000;
                 previous_unit = board_thickness_unit_selected;
               };
@@ -359,18 +353,18 @@ if (board) board(B)
     /* save in user's eaglerc file the settings */
     string str_setting;	// used to buffer the decimal values
 
-    sprintf( str_setting , "%.2f" , board_thickness );
-    cfgset( "genscad.board_thickness" , 		str_setting );
-    sprintf( str_setting , "%d" , board_color_selected );
-    cfgset( "genscad.board_color_selected" , 	str_setting );
-    sprintf( str_setting , "%d" , outline_layer );
-    cfgset( "genscad.outline_layer" , 		str_setting );
-    sprintf( str_setting , "%d" , board_only );
-    cfgset( "genscad.board_only" , 			str_setting );
-    cfgset( "genscad.rm_cmd" , 					rm_cmd );
-    cfgset( "genscad.export_path" , 			export_path );
-    sprintf( str_setting , "%d" , skip_vias );
-    cfgset( "genscad.skip_vias" , 				str_setting );
+    sprintf(str_setting, "%.2f", board_thickness);
+    cfgset("genscad.board_thickness", str_setting);
+    sprintf(str_setting, "%d", board_color_selected);
+    cfgset("genscad.board_color_selected", str_setting);
+    sprintf(str_setting, "%d", outline_layer);
+    cfgset("genscad.outline_layer", str_setting);
+    sprintf(str_setting, "%d", board_only);
+    cfgset("genscad.board_only", str_setting);
+    cfgset("genscad.rm_cmd", rm_cmd);
+    cfgset("genscad.export_path", export_path);
+    sprintf(str_setting, "%d", skip_vias);
+    cfgset("genscad.skip_vias", str_setting);
 
 
 // if subfolder defined, and does not exist, create it automatically
@@ -382,7 +376,7 @@ if (board) board(B)
         int nglob = fileglob(a, filedir(B.name) + "*");
         for( int i=0 ; i<nglob ; i++)
           {
-            if( strsub( a[i] , strlen( a[i] )-1 , 1 ) == "/" )		// is a folder
+            if( strsub( a[i] , strlen( a[i] )-1 , 1 ) == "/" ) // is a folder
               {
                 // extract folder name by removing board directory
                 if(   strsub( a[i] , strlen(filedir(B.name) ) ) == export_path )
@@ -522,7 +516,7 @@ if (board) board(B)
         }
       }
 
-      if( skip_vias == 0 )		//vias are slow to process in Sketchup so this can save a lot of time
+      if( skip_vias == 0 ) //vias are slow to process in Sketchup so this can save a lot of time
         {
           B.signals(S)
           {
@@ -627,16 +621,16 @@ if (board) board(B)
                             attr_str = A.value;
                             nb_fields_attr = strsplit( temp_str , attr_str , ';' );	// name and arguments are ; separated
 
-                            while( strsub( temp_str[0] , 0 , 1) == " " )	// remove all spaces at beginning and end of temp_str[0]
+                            while( strsub( temp_str[0] , 0 , 1) == " " ) // remove all spaces at beginning and end of temp_str[0]
                               temp_str[0] = strsub( temp_str[0] , 1);
                             while( strsub( temp_str[0] , strlen(temp_str[0])-1) == " " )
                               temp_str[0] = strsub( temp_str[0] , 0 , strlen(temp_str[0])-1);
 
                             if( temp_str[0] != "")
-                              package_name = temp_str[0];					// name of part is first
+                              package_name = temp_str[0]; // name of part is first
                             if( nb_fields_attr > 1)
                               {
-                                while( strsub( temp_str[1] , 0 , 1) == " " )	// remove all spaces at beginning and end of temp_str[1]
+                                while( strsub( temp_str[1] , 0 , 1) == " " ) // remove all spaces at beginning and end of temp_str[1]
                                   temp_str[1] = strsub( temp_str[1] , 1);
                                 while( strsub( temp_str[1] , strlen(temp_str[1])-1) == " " )
                                   temp_str[1] = strsub( temp_str[1] , 0 , strlen(temp_str[1])-1);
@@ -644,7 +638,7 @@ if (board) board(B)
                                 if( nb_fields_attr > 2)
                                   {
 
-                                    while( strsub( temp_str[2] , 0 , 1) == " " )	// remove all spaces at beginning and end of temp_str[2]
+                                    while( strsub( temp_str[2] , 0 , 1) == " " ) // remove all spaces at beginning and end of temp_str[2]
                                       temp_str[2] = strsub( temp_str[2] , 1);
                                     while( strsub( temp_str[2] , strlen(temp_str[1])-1) == " " )
                                       temp_str[2] = strsub( temp_str[2] , 0 , strlen(temp_str[2])-1);
@@ -671,7 +665,7 @@ if (board) board(B)
                                         temp_str[2] = strsub( temp_str[2] , 0 , strlen(temp_str[2])-4);
                                       }
 
-                                    while( strsub( temp_str[2] , strlen(temp_str[2])-1) == " " )			// clean ending
+                                    while( strsub( temp_str[2] , strlen(temp_str[2])-1) == " " ) // clean ending
                                       temp_str[2] = strsub( temp_str[2] , 0 , strlen(temp_str[2])-1);
 
                                     // replace any comma by a dot
@@ -679,11 +673,11 @@ if (board) board(B)
                                     strsplit(z_array, temp_str[2], ',');
                                     temp_str[2] = strjoin(z_array, '.');
 
-                                    real z_offset = strtod( temp_str[2] );	// conversion to decimal
+                                    real z_offset = strtod( temp_str[2] ); // conversion to decimal
                                     if( z_unit == "mm" )
                                       z += z_offset;
                                     if( z_unit == "in" )
-                                      z += z_offset * 25.4;				// unit conversion
+                                      z += z_offset * 25.4; // unit conversion
                                     if( z_unit == "mil" )
                                       z += z_offset * 25.4 / 1000;
                                     if( z_unit == "mils" )
@@ -694,16 +688,16 @@ if (board) board(B)
                                 z2=z;
                                 angle2=angle;
                                 offset=0;
-                                if( strsub( temp_str[1] , offset , 1) == "M" )				// mirror
+                                if( strsub( temp_str[1] , offset , 1) == "M" ) // mirror
                                   {
                                     offset ++;
                                     z2 *= -1.0;
                                     angle2 += 180;
                                   }
-                                if( strsub( temp_str[1] , offset , 1) == "R" )				// rotation
+                                if( strsub( temp_str[1] , offset , 1) == "R" ) // rotation
                                   {
                                     offset ++;
-                                    angle2 += strtod( strsub( temp_str[1] , offset ));		// angle
+                                    angle2 += strtod( strsub( temp_str[1] , offset )); // angle
                                   }
                                 angle2 = (angle2>=360.0) ? ( angle2 - 360.0) : ( angle2); // modulus
                                 angle2 = (angle2>=360.0) ? ( angle2 - 360.0) : ( angle2); // modulus
