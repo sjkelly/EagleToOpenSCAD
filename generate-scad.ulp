@@ -24,7 +24,7 @@
 
 #usage "<b>Exports a board to OpenSCAD</b>\n"
 "<p>Generates a 3D model of the board and components."
-"<p>Documentation avaliable at http://github.com/"
+"<p>Documentation avaliable at http://github.com/sjkelly/EagleToOpenSCAD"
 "<p><author>Author: sjkelly@wpi.edu</author>"
 
 #require 5.0900 // functions netget, cfgget and cfgset only available on versions 5.9 and newer
