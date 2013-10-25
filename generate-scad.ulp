@@ -192,7 +192,7 @@ if (board) board(B)
     outline_layer = strtol(cfgget( "genscad.outline_layer" , "0")); // default => dimension
     board_only = strtol(cfgget( "genscad.board_only" , "0")); // default => disabled
     export_path = cfgget("genscad.export_path" , "");
-    skip_vias = strtol(cfgget( "genscad.skip_vias" , "0")); // default => disabled
+    skip_vias = strtol(cfgget( "genscad.skip_vias" , "1")); // default => disabled
     use_extrude = strtol(cfgget( "genscad.use_extrude" , "0")); // default => disabled
     use_polyholes = strtol(cfgget( "genscad.use_polyholes" , "0")); // default => disabled
     string board_thickness_unit[] = {"mm","mils","inch"};
@@ -667,7 +667,6 @@ if (board) board(B)
       // Details about the file format
       printf("//Created by generate-scad.ulp version %d.%d\n", major_version , minor_version);
     }
-
 
     dlgMessageBox( "generate-scad.ulp " + genscad_version + " : <b>export completed</b>" );
     exit (0);
