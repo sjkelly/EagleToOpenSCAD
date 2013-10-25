@@ -39,23 +39,6 @@ string board_colors[] = {"green" , "red" , "blue" , "black" , "white" , "yellow"
 string rm_cmd, mkdir_cmd, export_path, cmd;
 int grid_unit; // keep the used grid unit
 
-// Convert unity to mic, mm, mil or inch using board grid settings.
-real u2u(int val, int grid_unit) {
-    switch (grid_unit) {
-        case GRID_UNIT_MIC:
-            return u2mic(val);
-            
-        case GRID_UNIT_MM:
-            return u2mm(val);
-
-        case GRID_UNIT_MIL:
-            return u2mil(val);
-
-        case GRID_UNIT_INCH:
-            return u2inch(val);
-    }
-}
-
 // find string s2 in s1, and replace with s3
 string replace_string(string s1, string s2, string s3) {
     int i, pos = 1;
@@ -69,27 +52,6 @@ string replace_string(string s1, string s2, string s3) {
         a = st1+s3+st2;
     }
     return a;
-}
-
-string up_one_folder( string path ) {
-    return strsub(path , 0 , strrstr(path ,"/" ,strlen(path) - 2) + 1);
-}
-
-int correct_settings( void ) {
-    int failed = 0;
-
-    //replacing wrong characters automatically
-    export_path = replace_string( export_path , "\\" , "/" );
-
-    // export path can be empty
-    // if not empty, \ are replaced automatically by /
-    // the last character should be a / automatically added
-    if( export_path != "" ) {
-        if( strsub(export_path,strlen(export_path)-1,1) != "/" )
-            export_path = export_path + "/";
-    }
-
-    return failed;
 }
 
 /* OS detection function suggested by Andreas Weidner
