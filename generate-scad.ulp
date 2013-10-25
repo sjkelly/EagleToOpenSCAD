@@ -36,8 +36,7 @@
 string board_colors[] = {"green" , "red" , "blue" , "black" , "white" , "yellow"};
 
 // gloabal variables
-string rm_cmd, mkdir_cmd, export_path, cmd;
-int grid_unit; // keep the used grid unit
+string mkdir_cmd, export_path, cmd;
 
 // find string s2 in s1, and replace with s3
 string replace_string(string s1, string s2, string s3) {
@@ -181,18 +180,7 @@ if (board) board(B)
     int use_extrude;
     int use_polyholes;
 
-    board(B)
-    {
-      grid_unit = (B.grid.unit);
-    }
     string active_layers = list_active_layers();
-
-    if( argv[1] == "completed" )
-      {
-        dlgMessageBox( "generate-scad.ulp " + genscad_version + " : <b>export completed</b>" );
-        exit(cmd);
-      }
-
 
     // path for config file on old versions, something like "C:/Program Files/EAGLE-X.Y/ulp/eagleUp_export.settings.txt"
     string settings_file = filesetext( argv[0] , ".settings.txt"); // argv[0] is the full path of this ULP
@@ -203,7 +191,6 @@ if (board) board(B)
     board_color_selected = strtol(cfgget("genscad.board_color_selected" , "1")); // default => red
     outline_layer = strtol(cfgget( "genscad.outline_layer" , "0")); // default => dimension
     board_only = strtol(cfgget( "genscad.board_only" , "0")); // default => disabled
-    rm_cmd = cfgget("genscad.rm_cmd" , "");
     export_path = cfgget("genscad.export_path" , "");
     skip_vias = strtol(cfgget( "genscad.skip_vias" , "0")); // default => disabled
     use_extrude = strtol(cfgget( "genscad.use_extrude" , "0")); // default => disabled
@@ -214,12 +201,10 @@ if (board) board(B)
     // automatic OS detection for OS specific commands
     if( is_windows() )
       {
-        rm_cmd = "del";
         mkdir_cmd = "cmd.exe /c mkdir"; // include system call
       }
     else
       {
-        rm_cmd = "rm";
         mkdir_cmd = "mkdir"; // on linux and mac OS, no need to call terminal
       }
 
@@ -323,7 +308,6 @@ if (board) board(B)
     cfgset("genscad.outline_layer", str_setting);
     sprintf(str_setting, "%d", board_only);
     cfgset("genscad.board_only", str_setting);
-    cfgset("genscad.rm_cmd", rm_cmd);
     cfgset("genscad.export_path", export_path);
     sprintf(str_setting, "%d", skip_vias);
     cfgset("genscad.skip_vias", str_setting);
@@ -684,11 +668,9 @@ if (board) board(B)
       printf("//Created by generate-scad.ulp version %d.%d\n", major_version , minor_version);
     }
 
-// re-launch the ULP with extra argument to display end message
-    cmd += "run '" + argv[0] + "' completed;\n";
 
-// exit and execute the command list
-    exit( cmd );
+    dlgMessageBox( "generate-scad.ulp " + genscad_version + " : <b>export completed</b>" );
+    exit (0);
   }
 else // if not launched from a board
   {
