@@ -53,6 +53,13 @@ string replace_string(string s1, string s2, string s3) {
     return a;
 }
 
+int is_number(string s){
+    for(int i = 0; s[i]; i++)
+        if(!isdigit(s[i]))
+            return 0;
+    return 1;
+}
+
 /* OS detection function suggested by Andreas Weidner
 http://www.eaglecentral.ca/forums/index.php?t=msg&goto=139751 */
 int is_windows()
@@ -549,12 +556,16 @@ if (board) board(B)
                     angle = E.angle;
                   }
 
+                // Cleanup package name for OpenSCAD
                 package_name = E.package.name;
                 package_name = replace_string( package_name , "/" , "_" );
                 package_name = replace_string( package_name , "," , "_" );
                 package_name = replace_string( package_name , "-" , "_" );
                 package_name = replace_string( package_name , "." , "_" );
-                
+                if(is_number(package_name))
+                    sprintf(package_name, "_%s", package_name);
+
+
                 //***5.9
                 if( EAGLE_VERSION >= 5 )
                   {
