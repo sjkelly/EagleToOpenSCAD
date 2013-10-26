@@ -400,8 +400,13 @@ if (board) board(B)
         }
 
       /* Starting data for .scad file */
+      string module_name = replace_string(filename(B.name),".brd","");
+
+      // cleanup module name for OpenSCAD compatibility
+      module_name = replace_string(module_name, "-", "_");
+
       if(use_polyholes)printf("include <Magpie/magpie.scad>;\n\n");
-      printf("module %s(){\n\tboard_thickness = %f;\n\teta = 0.1;\n\tboard_size = [%f,%f", replace_string(filename(B.name),".brd",""), board_thickness, (u2mm(max_h)-u2mm(min_h)), (u2mm(max_v)-u2mm(min_v)));
+      printf("module %s(){\n\tboard_thickness = %f;\n\teta = 0.1;\n\tboard_size = [%f,%f", module_name, board_thickness, (u2mm(max_h)-u2mm(min_h)), (u2mm(max_v)-u2mm(min_v)));
         if(use_extrude)
             printf("];\n");
         else
@@ -549,7 +554,7 @@ if (board) board(B)
                 package_name = replace_string( package_name , "," , "_" );
                 package_name = replace_string( package_name , "-" , "_" );
                 package_name = replace_string( package_name , "." , "_" );
-
+                
                 //***5.9
                 if( EAGLE_VERSION >= 5 )
                   {
@@ -658,7 +663,7 @@ if (board) board(B)
               }
           }
         }
-      printf("\t}\n}\n\n%s(); //Show module\n", replace_string(filename(B.name),".brd",""));
+      printf("\t}\n}\n\n%s(); //Show module\n", module_name);
       // Details about the file format
       printf("//Created by generate-scad.ulp version %d.%d\n", major_version , minor_version);
     }
